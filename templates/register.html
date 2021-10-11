@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="column is-5 is-offset-4">
+        <h3 class="title is-3">Register</h3>
+        <div class="box">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="notification is-danger">
+                        {{ messages[0] }}. Go to <a href="{{ url_for('users.login') }}">login page</a>.
+                    </div>
+                {% endif %}
+            {% endwith %}
+            <form method="POST">
+                <div class="field">
+                    {{ form.csrf_token() }}
+                    <div class="control">
+                        {{ form.email(class="input", placeholder="Email") }}
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        {{ form.firstname(class="input", placeholder="First Name") }}
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        {{ form.lastname(class="input", placeholder="Last Name") }}
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        {{ form.phone(class="input", placeholder="Phone") }}
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        {{ form.password(class="input", placeholder="Password") }}
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        {{ form.confirm_password(class="input", placeholder="Confirm Password") }}
+                    </div>
+
+                </div>
+                <div class="field">
+                    <div class="control">
+                        {{ form.pin_key(class="input", placeholder="PIN Key") }}
+                    </div>
+                    <div>
+                        {# TODO: Add PIN generation setup instructions #}
+                    </div>
+
+                </div>
+
+
+                <div>
+                    {{ form.submit(class="button is-info is-centered") }}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
