@@ -39,6 +39,9 @@
                 <div class="field">
                     <div class="control">
                         {{ form.password(class="input", placeholder="Password") }}
+                        {% for error in form.password.errors %}
+                        {{ error }}
+                    {% endfor %}
                     </div>
                 </div>
                 <div class="field">
