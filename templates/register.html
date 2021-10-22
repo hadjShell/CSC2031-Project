@@ -65,6 +65,9 @@
                 <div class="field">
                     <div class="control">
                         {{ form.pin_key(class="input", placeholder="PIN Key") }}
+                        {% for error in form.pin_key.errors %}
+                            {{ error }}
+                        {% endfor %}
                     </div>
                     <div>
                         {# TODO: Add PIN generation setup instructions #}

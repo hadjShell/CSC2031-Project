@@ -27,7 +27,10 @@ class RegisterForm(FlaskForm):
     # Password and confirm_password must match
     confirm_password = PasswordField(validators=[Required(),
                                                  EqualTo('password', message='Both password fields must be equal!')])
-    pin_key = StringField(validators=[Required()])
+    # PIN Key must be exactly 32 characters in length.
+    pin_key = StringField(validators=[Required(),
+                                      Length(min=32, max=32,
+                                             message='PIN Key must be exactly 32 characters in length.')])
     submit = SubmitField()
 
     # check if password contains at least 1 digit, 1 lowercase, 1 uppercase and 1 special character, return error if not
