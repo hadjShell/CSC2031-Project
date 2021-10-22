@@ -40,6 +40,9 @@
                 <div class="field">
                     <div class="control">
                         {{ form.phone(class="input", placeholder="Phone") }}
+                        {% for error in form.phone.errors %}
+                            {{ error }}
+                        {% endfor %}
                     </div>
                 </div>
                 <div class="field">
