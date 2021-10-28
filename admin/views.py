@@ -7,6 +7,11 @@ from models import User, Draw
 admin_blueprint = Blueprint('admin', __name__, template_folder='templates')
 
 
+# todo: cheating
+user = User.query.first()
+draw_key = user.draw_key
+
+
 # VIEWS
 # view admin homepage
 @admin_blueprint.route('/admin')
@@ -46,7 +51,7 @@ def create_winning_draw():
     submitted_draw.strip()
 
     # create a new draw object with the form data.
-    new_winning_draw = Draw(user_id=0, draw=submitted_draw, win=True, round=round)
+    new_winning_draw = Draw(user_id=0, draw=submitted_draw, win=True, round=round, draw_key=draw_key)
 
     # add the new winning draw to the database
     db.session.add(new_winning_draw)
