@@ -1,4 +1,6 @@
 # IMPORTS
+import copy
+
 from flask import Blueprint, render_template, request, flash
 from app import db
 from models import User, Draw
@@ -68,11 +70,15 @@ def view_winning_draw():
 
     # get winning draw from DB
     current_winning_draw = Draw.query.filter_by(win=True).first()
+    # create a copy which is independent of database
+    draw_copy = copy.deepcopy(current_winning_draw)
+    # decrypt copy of draw
+    draw_copy.view_draw(draw_key)
 
     # if a winning draw exists
     if current_winning_draw:
         # re-render admin page with current winning draw and lottery round
-        return render_template('admin.html', winning_draw=current_winning_draw, name="PLACEHOLDER FOR FIRSTNAME")
+        return render_template('admin.html', winning_draw=draw_copy, name="PLACEHOLDER FOR FIRSTNAME")
 
     # if no winning draw exists, rerender admin page
     flash("No winning draw exists. Please add winning draw.")
