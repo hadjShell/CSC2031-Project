@@ -2,6 +2,7 @@
 import logging
 from datetime import datetime
 from functools import wraps
+import pyotp
 from flask import Blueprint, render_template, flash, redirect, url_for, request
 from flask_login import login_user, logout_user, current_user
 from werkzeug.security import check_password_hash
@@ -63,16 +64,19 @@ def login():
             flash('Please check your login details and try again')
             return render_template('login.html', form=form)
 
-        login_user(user)
+        if pyotp.TOTP(user.pin_key).verify(form.pin.data):
+            login_user(user)
 
-        # record login activity into database
-        user.last_logged_in = user.current_logged_in
-        user.current_logged_in = datetime.now()
-        db.session.add(user)
-        db.session.commit()
+            # record login activity into database
+            user.last_logged_in = user.current_logged_in
+            user.current_logged_in = datetime.now()
+            db.session.add(user)
+            db.session.commit()
 
-        # todo: user goes to profile page, admin goes to admin page
-        return profile()
+            # todo: user goes to profile page, admin goes to admin page
+            return profile()
+        else:
+            flash("You have supplied an invalid 2FA token!", "danger")
 
     return render_template('login.html', form=form)
 
