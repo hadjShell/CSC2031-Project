@@ -11,6 +11,7 @@
                     </div>
                 {% endif %}
             {% endwith %}
+            {% if not session['logins'] or session['logins'] < 3 %}
                 <form method="POST">
                     <div class="field">
                         {{ form.csrf_token() }}
@@ -47,7 +48,7 @@
                         {{ form.submit(class="button is-info is-centered") }}
                     </div>
                 </form>
-
+            {% endif %}
         </div>
     </div>
 {% endblock %}
