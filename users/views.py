@@ -64,6 +64,7 @@ def login():
             flash('Please check your login details and try again')
             return render_template('login.html', form=form)
 
+        # generation of user's PIN key matched user's input token
         if pyotp.TOTP(user.pin_key).verify(form.pin.data):
             login_user(user)
 
