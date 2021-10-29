@@ -9,6 +9,8 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///lottery.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'LongAndRandomSecretKey'
+app.config['RECAPTCHA_PUBLIC_KEY'] = "6LfaLQEdAAAAAN2TYZO3d53-59chlOiQlEnYk6qR"
+app.config['RECAPTCHA_PRIVATE_KEY'] = "6LfaLQEdAAAAAKjqEtMbcXa_XCkkWzUuWCBnF7kg"
 
 # initialise database
 db = SQLAlchemy(app)
