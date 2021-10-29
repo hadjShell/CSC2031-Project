@@ -54,6 +54,7 @@ class User(db.Model, UserMixin):
         # generate draw_key from password
         self.draw_key = base64.urlsafe_b64encode(scrypt(password, str(get_random_bytes(32)), 32, N=2 ** 14, r=8, p=1))
         self.role = role
+
         self.registered_on = datetime.now()
         self.last_logged_in = None
         self.current_logged_in = None

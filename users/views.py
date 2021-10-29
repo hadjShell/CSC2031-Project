@@ -1,7 +1,9 @@
 # IMPORTS
 import logging
+from datetime import datetime
 from functools import wraps
 from flask import Blueprint, render_template, flash, redirect, url_for, request
+from flask_login import login_user
 from werkzeug.security import check_password_hash
 from flask_login import current_user
 from app import db
@@ -44,6 +46,7 @@ def register():
 
         # sends user to login page
         return redirect(url_for('users.login'))
+
     # if request method is GET or form not valid re-render signup page
     return render_template('register.html', form=form)
 
@@ -60,6 +63,14 @@ def login():
         if not user or not check_password_hash(user.password, form.password.data):
             flash('Please check your login details and try again')
             return render_template('login.html', form=form)
+
+        login_user(user)
+
+        # record login activity into database
+        user.last_logged_in = user.current_logged_in
+        user.current_logged_in = datetime.now()
+        db.session.add(user)
+        db.session.commit()
 
         # todo: user goes to profile page, admin goes to admin page
         return profile()
