@@ -96,5 +96,3 @@ def play_again():
 
     flash("All played draws deleted.")
     return lottery()
-
-
