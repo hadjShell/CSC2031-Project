@@ -1,7 +1,7 @@
 # IMPORTS
 import copy
-
 from flask import Blueprint, render_template, request, flash
+from flask_login import login_required
 from app import db
 from models import User, Draw
 
@@ -17,12 +17,14 @@ draw_key = user.draw_key
 # VIEWS
 # view admin homepage
 @admin_blueprint.route('/admin')
+@login_required
 def admin():
     return render_template('admin.html', name="PLACEHOLDER FOR FIRSTNAME")
 
 
 # view all registered users
 @admin_blueprint.route('/view_all_users', methods=['POST'])
+@login_required
 def view_all_users():
     return render_template('admin.html', name="PLACEHOLDER FOR FIRSTNAME",
                            current_users=User.query.filter_by(role='user').all())
@@ -30,8 +32,8 @@ def view_all_users():
 
 # create a new winning draw
 @admin_blueprint.route('/create_winning_draw', methods=['POST'])
+@login_required
 def create_winning_draw():
-
     # get current winning draw
     current_winning_draw = Draw.query.filter_by(win=True).first()
     round = 1
@@ -66,6 +68,7 @@ def create_winning_draw():
 
 # view current winning draw
 @admin_blueprint.route('/view_winning_draw', methods=['POST'])
+@login_required
 def view_winning_draw():
 
     # get winning draw from DB
@@ -87,6 +90,7 @@ def view_winning_draw():
 
 # view lottery results and winners
 @admin_blueprint.route('/run_lottery', methods=['POST'])
+@login_required
 def run_lottery():
 
     # get current unplayed winning draw
@@ -149,6 +153,7 @@ def run_lottery():
 
 # view last 10 log entries
 @admin_blueprint.route('/logs', methods=['POST'])
+@login_required
 def logs():
     with open("lottery.log", "r") as f:
         content = f.read().splitlines()[-10:]
