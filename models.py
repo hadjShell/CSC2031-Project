@@ -97,3 +97,25 @@ def init_db():
 
     db.session.add(admin)
     db.session.commit()
+
+    test1 = User(email='bob@email.com',
+                 password='Pwd123456&',
+                 pin_key='5NMO6KPHI5OY7SYHZJJ5K76RVNQRBYWG',
+                 firstname='Bob',
+                 lastname='Brown',
+                 phone='0191-987-4321',
+                 role='user')
+
+    db.session.add(test1)
+    db.session.commit()
+
+    test2 = User(email='carol@email.com',
+                 password='caroL$$987',
+                 pin_key='NJC2Q4YVK3JPQCKBVVFFJABDAZTYJPHL',
+                 firstname='Carol',
+                 lastname='Smith',
+                 phone='0191-456-7654',
+                 role='user')
+
+    db.session.add(test2)
+    db.session.commit()

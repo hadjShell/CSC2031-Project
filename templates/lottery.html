@@ -87,10 +87,10 @@
                                 <td>{{ draw.round }}</td>
                                 <td>{{ draw.draw }}</td>
                                 <td>{{ draw.played }}</td>
-                                {% if draw.win %}
-                                    <td style="background-color: yellow">{{ draw.win }}</td>
+                                {% if draw.match %}
+                                    <td style="background-color: yellow">{{ draw.match }}</td>
                                 {% else %}
-                                    <td>{{ draw.win }}</td>
+                                    <td>{{ draw.match }}</td>
                                 {% endif %}
                             </tr>
                         {% endfor %}
