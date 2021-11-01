@@ -86,26 +86,31 @@ def index():
 # error pages view
 @app.errorhandler(400)
 def bad_request(error):
+    logging.warning('SECURITY - Bad request [%s]', request.remote_addr)
     return render_template('errors/400.html'), 400
 
 
 @app.errorhandler(403)
 def page_forbidden(error):
+    logging.warning('SECURITY - Forbidden [%s]', request.remote_addr)
     return render_template('errors/403.html'), 403
 
 
 @app.errorhandler(404)
 def page_not_found(error):
+    logging.warning('SECURITY - Page not found [%s]', request.remote_addr)
     return render_template('errors/404.html'), 404
 
 
 @app.errorhandler(500)
 def internal_error(error):
+    logging.warning('SECURITY - Internal server error [%s]', request.remote_addr)
     return render_template('errors/500.html'), 500
 
 
 @app.errorhandler(503)
 def service_unavailable(error):
+    logging.warning('SECURITY - Service unavailable [%s]', request.remote_addr)
     return render_template('errors/503.html'), 503
 
 
