@@ -9,11 +9,6 @@ from models import User, Draw
 admin_blueprint = Blueprint('admin', __name__, template_folder='templates')
 
 
-# todo: cheating
-user = User.query.first()
-draw_key = user.draw_key
-
-
 # VIEWS
 # view admin homepage
 @admin_blueprint.route('/admin')
