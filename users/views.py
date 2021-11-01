@@ -3,8 +3,9 @@ import logging
 from datetime import datetime
 from functools import wraps
 import pyotp
-from flask import Blueprint, render_template, flash, redirect, url_for, request, session
-from flask_login import login_user, logout_user, current_user, login_required
+from flask import Blueprint, render_template, flash, redirect, url_for, request, session, current_app
+from flask_login import login_user, logout_user, current_user
+from flask_login.config import EXEMPT_METHODS
 from werkzeug.security import check_password_hash
 from app import db
 from models import User
@@ -12,6 +13,21 @@ from users.forms import RegisterForm, LoginForm
 
 # CONFIG
 users_blueprint = Blueprint('users', __name__, template_folder='templates')
+
+
+# custom login _required decorator
+def login_required(func):
+    @wraps(func)
+    def decorated_view(*args, **kwargs):
+        if request.method in EXEMPT_METHODS:
+            return func(*args, **kwargs)
+        elif not current_user.is_authenticated:
+            # log anonymous users invalid attempts
+            logging.warning('SECURITY - Anonymous invalid access [%s]', request.remote_addr)
+            return current_app.login_manager.unauthorized()
+        return func(*args, **kwargs)
+
+    return decorated_view
 
 
 # VIEWS
@@ -43,6 +59,10 @@ def register():
         # add the new user to the database
         db.session.add(new_user)
         db.session.commit()
+
+        # log user registration
+        logging.warning('SECURITY - User registration [%s, %s, %s]',
+                        form.firstname.data, form.lastname.data, request.remote_addr)
 
         # sends user to login page
         return redirect(url_for('users.login'))
@@ -79,6 +99,10 @@ def login():
             else:
                 flash('Please check your login details and try again. 2 login attempts remaining')
 
+            # log user invalid login
+            logging.warning('SECURITY - Invalid login attempt [%s, %s, %s, %s]',
+                            current_user.id, current_user.firstname, current_user.lastname, request.remote_addr)
+
             return render_template('login.html', form=form)
 
         # generation of user's PIN key matched user's input token
@@ -93,6 +117,10 @@ def login():
             user.current_logged_in = datetime.now()
             db.session.add(user)
             db.session.commit()
+
+            # log user login
+            logging.warning('SECURITY - Log in [%s, %s, %s, %s]',
+                            current_user.id, current_user.firstname, current_user.lastname, request.remote_addr)
 
             # todo: user goes to profile page, admin goes to admin page
             return profile()
@@ -125,5 +153,9 @@ def account():
 @users_blueprint.route('/logout')
 @login_required
 def logout():
+    # log user logout
+    logging.warning('SECURITY - Log out [%s, %s, %s, %s]',
+                    current_user.id, current_user.firstname, current_user.lastname, request.remote_addr)
+
     logout_user()
     return redirect(url_for('index'))

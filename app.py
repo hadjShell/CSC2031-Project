@@ -1,8 +1,30 @@
 # IMPORTS
+import logging
 import socket
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+
+
+# LOGGING
+# filter out events that do not contain the word SECURITY
+class SecurityFilter(logging.Filter):
+    def filter(self, record):
+        return "SECURITY" in record.getMessage()
+
+
+fh = logging.FileHandler('lottery.log', 'w')
+# track and log events at WARNING level and above
+fh.setLevel(logging.WARNING)
+fh.addFilter(SecurityFilter())
+formatter = logging.Formatter('%(asctime)s : %(message)s', '%m/%d/%Y %I:%M:%S %p')
+fh.setFormatter(formatter)
+
+logger = logging.getLogger('')
+# logging messages are not passed to the handlers of other loggers
+logger.propagate = False
+logger.addHandler(fh)
+
 
 # CONFIG
 app = Flask(__name__)
