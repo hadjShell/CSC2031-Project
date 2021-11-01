@@ -122,8 +122,11 @@ def login():
             logging.warning('SECURITY - Log in [%s, %s, %s, %s]',
                             current_user.id, current_user.firstname, current_user.lastname, request.remote_addr)
 
-            # todo: user goes to profile page, admin goes to admin page
-            return profile()
+            # end user goes to profile page, admin goes to admin page
+            if current_user.role == 'admin':
+                return redirect(url_for('admin.admin'))
+            else:
+                return redirect(url_for('users.profile'))
         else:
             flash("You have supplied an invalid 2FA token!", "danger")
 
