@@ -1,6 +1,5 @@
 # IMPORTS
 import copy
-import logging
 from flask import Blueprint, render_template, request, flash
 from flask_login import login_required, current_user
 from app import db, requires_roles
@@ -95,7 +94,7 @@ def check_draws():
 @login_required
 @requires_roles('user')
 def play_again():
-    delete_played = Draw.__table__.delete().filter_by(user_id=current_user.id, played=True).all()
+    delete_played = Draw.__table__.delete().filter_by(user_id=current_user.id, played=True)
     db.session.execute(delete_played)
     db.session.commit()
 
