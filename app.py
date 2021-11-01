@@ -40,6 +40,7 @@ app.config['RECAPTCHA_PRIVATE_KEY'] = "6LfaLQEdAAAAAKjqEtMbcXa_XCkkWzUuWCBnF7kg"
 db = SQLAlchemy(app)
 
 
+# DECORATORS
 # custom login _required decorator
 def login_required(func):
     @wraps(func)
@@ -54,6 +55,26 @@ def login_required(func):
         return func(*args, **kwargs)
 
     return decorated_view
+
+
+# custom requires_roles decorator
+def requires_roles(*roles):
+    def wrapper(func):
+        @wraps(func)
+        def wrapped(*args, **kwargs):
+            # anonymous user has no role, nothing done
+            if not current_user.is_authenticated:
+                return func(*args, **kwargs)
+            elif current_user.role not in roles:
+                # log invalid access attempts
+                logging.warning('SECURITY - Unauthorised access attempt [%s, %s, %s, %s %s]',
+                                current_user.id, current_user.firstname, current_user.lastname,
+                                current_user.role, request.remote_addr)
+                # Redirect the user to an unauthorised notice!
+                return render_template('errors/403.html')
+            return func(*args, **kwargs)
+        return wrapped
+    return wrapper
 
 
 # HOME PAGE VIEW

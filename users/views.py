@@ -5,7 +5,7 @@ import pyotp
 from flask import Blueprint, render_template, flash, redirect, url_for, request, session
 from flask_login import login_user, logout_user, current_user
 from werkzeug.security import check_password_hash
-from app import db, login_required
+from app import db, login_required, requires_roles
 from models import User
 from users.forms import RegisterForm, LoginForm
 
@@ -16,6 +16,7 @@ users_blueprint = Blueprint('users', __name__, template_folder='templates')
 # VIEWS
 # view registration
 @users_blueprint.route('/register', methods=['GET', 'POST'])
+@requires_roles()
 def register():
     # create signup form object
     form = RegisterForm()
@@ -56,6 +57,7 @@ def register():
 
 # view user login
 @users_blueprint.route('/login', methods=['GET', 'POST'])
+@requires_roles()
 def login():
     # if session attribute logins does not exist create attribute logins
     if not session.get('logins'):
@@ -119,6 +121,7 @@ def login():
 # view user profile
 @users_blueprint.route('/profile')
 @login_required
+@requires_roles('user')
 def profile():
     return render_template('profile.html', name=current_user.firstname)
 
@@ -126,6 +129,7 @@ def profile():
 # view user account
 @users_blueprint.route('/account')
 @login_required
+@requires_roles('user', 'admin')
 def account():
     return render_template('account.html',
                            acc_no=current_user.id,
