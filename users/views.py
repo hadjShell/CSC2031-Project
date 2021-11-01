@@ -1,33 +1,16 @@
 # IMPORTS
 import logging
 from datetime import datetime
-from functools import wraps
 import pyotp
-from flask import Blueprint, render_template, flash, redirect, url_for, request, session, current_app
+from flask import Blueprint, render_template, flash, redirect, url_for, request, session
 from flask_login import login_user, logout_user, current_user
-from flask_login.config import EXEMPT_METHODS
 from werkzeug.security import check_password_hash
-from app import db
+from app import db, login_required
 from models import User
 from users.forms import RegisterForm, LoginForm
 
 # CONFIG
 users_blueprint = Blueprint('users', __name__, template_folder='templates')
-
-
-# custom login _required decorator
-def login_required(func):
-    @wraps(func)
-    def decorated_view(*args, **kwargs):
-        if request.method in EXEMPT_METHODS:
-            return func(*args, **kwargs)
-        elif not current_user.is_authenticated:
-            # log anonymous users invalid attempts
-            logging.warning('SECURITY - Anonymous invalid access [%s]', request.remote_addr)
-            return current_app.login_manager.unauthorized()
-        return func(*args, **kwargs)
-
-    return decorated_view
 
 
 # VIEWS

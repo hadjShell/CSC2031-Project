@@ -1,9 +1,11 @@
 # IMPORTS
 import logging
 import socket
-from flask import Flask, render_template
+from functools import wraps
+from flask_login.config import EXEMPT_METHODS
+from flask import Flask, render_template, current_app, request
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
 
 
 # LOGGING
@@ -36,6 +38,22 @@ app.config['RECAPTCHA_PRIVATE_KEY'] = "6LfaLQEdAAAAAKjqEtMbcXa_XCkkWzUuWCBnF7kg"
 
 # initialise database
 db = SQLAlchemy(app)
+
+
+# custom login _required decorator
+def login_required(func):
+    @wraps(func)
+    def decorated_view(*args, **kwargs):
+        if request.method in EXEMPT_METHODS:
+            return func(*args, **kwargs)
+        elif not current_user.is_authenticated:
+            # log anonymous users invalid attempts
+            logging.warning('SECURITY - Anonymous invalid access [%s]', request.remote_addr)
+            # Redirect the user to an unauthorised notice!
+            return current_app.login_manager.unauthorized() and render_template('errors/403.html')
+        return func(*args, **kwargs)
+
+    return decorated_view
 
 
 # HOME PAGE VIEW

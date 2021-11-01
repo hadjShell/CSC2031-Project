@@ -2,8 +2,7 @@
 import copy
 from flask import Blueprint, render_template, request, flash
 from flask_login import current_user
-from users.views import login_required
-from app import db
+from app import db, login_required
 from models import User, Draw
 
 # CONFIG
