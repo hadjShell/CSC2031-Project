@@ -6,6 +6,7 @@ from flask_login.config import EXEMPT_METHODS
 from flask import Flask, render_template, current_app, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, current_user
+from flask_talisman import Talisman
 
 
 # LOGGING
@@ -38,6 +39,16 @@ app.config['RECAPTCHA_PRIVATE_KEY'] = "6LfaLQEdAAAAAKjqEtMbcXa_XCkkWzUuWCBnF7kg"
 
 # initialise database
 db = SQLAlchemy(app)
+
+# Security Headers
+# custom Content Security Policy
+csp = {
+    'default-src': [
+        '\'self\'',
+        'https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css'
+    ],
+}
+talisman = Talisman(app, content_security_policy=csp)
 
 
 # DECORATORS
@@ -80,37 +91,34 @@ def requires_roles(*roles):
 # HOME PAGE VIEW
 @app.route('/')
 def index():
+    # view HTTP headers in the console
+    print(request.headers)
     return render_template('index.html')
 
 
 # error pages view
 @app.errorhandler(400)
 def bad_request(error):
-    logging.warning('SECURITY - Bad request [%s]', request.remote_addr)
     return render_template('errors/400.html'), 400
 
 
 @app.errorhandler(403)
 def page_forbidden(error):
-    logging.warning('SECURITY - Forbidden [%s]', request.remote_addr)
     return render_template('errors/403.html'), 403
 
 
 @app.errorhandler(404)
 def page_not_found(error):
-    logging.warning('SECURITY - Page not found [%s]', request.remote_addr)
     return render_template('errors/404.html'), 404
 
 
 @app.errorhandler(500)
 def internal_error(error):
-    logging.warning('SECURITY - Internal server error [%s]', request.remote_addr)
     return render_template('errors/500.html'), 500
 
 
 @app.errorhandler(503)
 def service_unavailable(error):
-    logging.warning('SECURITY - Service unavailable [%s]', request.remote_addr)
     return render_template('errors/503.html'), 503
 
 
@@ -145,4 +153,4 @@ if __name__ == "__main__":
     app.register_blueprint(admin_blueprint)
     app.register_blueprint(lottery_blueprint)
 
-    app.run(host=my_host, port=free_port, debug=True)
+    app.run(host=my_host, port=free_port, debug=True, ssl_context=('cert.pem', 'key.pem'))
