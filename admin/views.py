@@ -143,6 +143,9 @@ def run_lottery():
                     for d in user_draws:
                         if d.id == draw.id:
                             d.match = True
+                            # commit draw changes to DB
+                            db.session.add(d)
+                            db.session.commit()
 
             for d in user_draws:
                 # update draw as played
