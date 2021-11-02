@@ -34,12 +34,12 @@ def view_all_users():
 def create_winning_draw():
     # get current winning draw
     current_winning_draw = Draw.query.filter_by(win=True).first()
-    round = 1
+    current_round = 1
 
     # if a current winning draw exists
     if current_winning_draw:
         # update lottery round by 1
-        round = current_winning_draw.round + 1
+        current_round = current_winning_draw.round + 1
 
         # delete current winning draw
         db.session.delete(current_winning_draw)
@@ -53,7 +53,7 @@ def create_winning_draw():
     submitted_draw.strip()
 
     # create a new draw object with the form data.
-    new_winning_draw = Draw(user_id=current_user.id, draw=submitted_draw, win=True, round=round,
+    new_winning_draw = Draw(user_id=current_user.id, draw=submitted_draw, win=True, round=current_round,
                             draw_key=current_user.draw_key)
 
     # add the new winning draw to the database
@@ -94,17 +94,17 @@ def view_winning_draw():
 @requires_roles('admin')
 def run_lottery():
 
-    # get current unplayed winning draw
+    # get current un-played winning draw
     current_winning_draw = Draw.query.filter_by(win=True, played=False).first()
     # create a copy which is independent of database
     draw_copy = copy.deepcopy(current_winning_draw)
     # decrypt copy of draw
     draw_copy.view_draw(current_user.draw_key)
 
-    # if current unplayed winning draw exists
+    # if current un-played winning draw exists
     if current_winning_draw:
 
-        # get all unplayed user draws
+        # get all un-played user draws
         user_draws = Draw.query.filter_by(win=False, played=False).all()
         # creates a list of copied draw objects which are independent of database.
         user_draws_copies = list(map(lambda x: copy.deepcopy(x), user_draws))
@@ -118,7 +118,7 @@ def run_lottery():
 
         results = []
 
-        # if at least one unplayed user draw exists
+        # if at least one un-played user draw exists
         if user_draws:
 
             # update current winning draw as played
@@ -126,13 +126,13 @@ def run_lottery():
             db.session.add(current_winning_draw)
             db.session.commit()
 
-            # for each unplayed user draw
+            # for each un-played user draw
             for draw in decrypted_user_draws:
 
                 # get the owning user (instance/object)
                 user = User.query.filter_by(id=draw.user_id).first()
 
-                # if user draw matches current unplayed winning draw
+                # if user draw matches current un-played winning draw
                 if draw.draw == draw_copy.draw:
 
                     # add details of winner to list of results
@@ -167,7 +167,7 @@ def run_lottery():
         flash("No user draws entered.")
         return admin()
 
-    # if current unplayed winning draw does not exist
+    # if current un-played winning draw does not exist
     flash("Current winning draw expired. Add new winning draw for next round.")
     return admin()
 
