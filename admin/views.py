@@ -73,13 +73,13 @@ def view_winning_draw():
 
     # get winning draw from DB
     current_winning_draw = Draw.query.filter_by(win=True).first()
-    # create a copy which is independent of database
-    draw_copy = copy.deepcopy(current_winning_draw)
-    # decrypt copy of draw
-    draw_copy.view_draw(current_user.draw_key)
 
     # if a winning draw exists
     if current_winning_draw:
+        # create a copy which is independent of database
+        draw_copy = copy.deepcopy(current_winning_draw)
+        # decrypt copy of draw
+        draw_copy.view_draw(current_user.draw_key)
         # re-render admin page with current winning draw and lottery round
         return render_template('admin.html', winning_draw=draw_copy, name=current_user.firstname)
 
@@ -96,13 +96,13 @@ def run_lottery():
 
     # get current un-played winning draw
     current_winning_draw = Draw.query.filter_by(win=True, played=False).first()
-    # create a copy which is independent of database
-    draw_copy = copy.deepcopy(current_winning_draw)
-    # decrypt copy of draw
-    draw_copy.view_draw(current_user.draw_key)
 
     # if current un-played winning draw exists
     if current_winning_draw:
+        # create a copy which is independent of database
+        draw_copy = copy.deepcopy(current_winning_draw)
+        # decrypt copy of draw
+        draw_copy.view_draw(current_user.draw_key)
 
         # get all un-played user draws
         user_draws = Draw.query.filter_by(win=False, played=False).all()

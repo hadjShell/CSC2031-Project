@@ -85,8 +85,8 @@ def login():
                 flash('Please check your login details and try again. 2 login attempts remaining')
 
             # log user invalid login
-            logging.warning('SECURITY - Invalid login attempt [%s, %s, %s, %s]',
-                            current_user.id, current_user.firstname, current_user.lastname, request.remote_addr)
+            logging.warning('SECURITY - Invalid login attempt [%s]',
+                            request.remote_addr)
 
             return render_template('login.html', form=form)
 
