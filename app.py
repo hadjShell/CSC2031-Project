@@ -45,8 +45,18 @@ db = SQLAlchemy(app)
 csp = {
     'default-src': [
         '\'self\'',
-        'https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css'
+        'https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css',
     ],
+    'script-src': [
+        '\'self\'',
+        '\'unsafe-inline\'',
+        'https://www.google.com/recaptcha/',
+        'https://www.gstatic.com/recaptcha/',
+    ],
+    'frame-src': [
+        'https://www.google.com/recaptcha/',
+        'https://www.recaptcha.google.com.com/recaptcha/'
+    ]
 }
 talisman = Talisman(app, content_security_policy=csp)
 
